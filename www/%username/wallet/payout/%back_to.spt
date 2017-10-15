@@ -128,9 +128,8 @@ title = _("Withdrawing Money")
 
     % if show_form
     <p>{{ _(
-        "Withdrawing money to a SEPA bank account is free, transfers to other "
-        "countries cost {0} per transfer. Additional fee from your bank may apply.",
-        Money(constants.FEE_PAYOUT_OUTSIDE_SEPA.fix * (constants.FEE_VAT + 1), 'EUR'),
+        "Withdrawing euros to a SEPA bank account is free, all other withdrawals cost {0}.",
+        constants.FEE_PAYOUT['EUR']['foreign'].with_vat,
     ) }}</p>
 
     <h3>{{ _("Amount") }}</h3>
