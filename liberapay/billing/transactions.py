@@ -2,7 +2,7 @@
 """
 from __future__ import division, print_function, unicode_literals
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 
 from mangopay.exceptions import APIError
 from mangopay.resources import (
@@ -15,7 +15,7 @@ from pando.utils import typecheck
 from liberapay.billing.fees import (
     skim_bank_wire, skim_credit, upcharge_card, upcharge_direct_debit
 )
-from liberapay.constants import FEE_PAYOUT_WARN, QUARANTINE
+from liberapay.constants import D_CENT, FEE_PAYOUT_WARN, QUARANTINE
 from liberapay.exceptions import (
     NegativeBalance, NotEnoughWithdrawableMoney, PaydayIsRunning,
     FeeExceedsAmount, TransactionFeeTooHigh, TransferError,
@@ -27,9 +27,10 @@ from liberapay.models.exchange_route import ExchangeRoute
 from liberapay.utils import group_by, NS
 
 
-Money.__eq__ = lambda a, b: isinstance(b, Money) and a.__dict__ == b.__dict__
+Money.__eq__ = lambda a, b: a.__dict__ == b.__dict__ if isinstance(b, Money) else a.amount == b
 Money.__iter__ = lambda m: iter((m.amount, m.currency))
 Money.__repr__ = lambda m: '<Money Amount=%(amount)r Currency=%(currency)r>' % m.__dict__
+Money.round_up = lambda m: Money(m.amount.quantize(D_CENT, rounding=ROUND_UP), m.currency)
 
 
 QUARANTINE = '%s days' % QUARANTINE.days
